@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "tooth": "github.com/lgc-LLSEDev/PlayerExp",
+  "version": "0.1.0",
+  "dependencies": {},
+  "information": {
+    "name": "PlayerExp",
+    "description": "另一套独立的等级系统",
+    "author": "lgc2333",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/lgc-LLSEDev/PlayerExp"
+  },
+  "placement": [
+    {
+      "source": "PlayerExp.js",
+      "destination": "plugins/PlayerExp.js"
+    }
+  ],
+  "possession": ["plugins/PlayerExp/"]
+}
