@@ -689,6 +689,7 @@ function regPapiVar() {
       const { exp, nextLevelExp } = getPlayerExpData(xuid);
       return (nextLevelExp - exp).toString();
     },
+    last_login_date: (xuid) => getPlayerExpData(xuid).lastLoginDate,
   };
 
   for (const [name, func] of Object.entries(papiPlayerVars)) {
