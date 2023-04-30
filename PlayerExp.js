@@ -1,10 +1,9 @@
 // LiteLoaderScript Dev Helper
 /// <reference path="../HelperLib/src/index.d.ts"/>
-/* eslint-disable new-cap */
-/* global ll mc file NBT Version */
+/* global ll mc logger file NBT Version */
 
 const PLUGIN_NAME = 'PlayerExp';
-const PLUGIN_DESC = '玩家经验系统';
+const PLUGIN_DESC = '另一套独立的玩家经验与等级系统';
 /** @type {[number, number, number, Version]} */
 const PLUGIN_VERSION = [0, 1, 0, Version.Release];
 const PLUGIN_EXTRA = { Author: 'student_2333', License: 'Apache-2.0' };
@@ -38,6 +37,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} ItemAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {`minecraft:${string}`} type
  * @property {number | [number, number]} amount
  * @property {number} [aux]
@@ -46,6 +46,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} SNbtAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {string} sNbt
  * @property {number | [number, number]} [amount]
  */
@@ -53,6 +54,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} MoneyAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {'money'} type
  * @property {number | [number, number]} amount
  */
@@ -60,6 +62,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} ScoreAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {'score'} type
  * @property {string} scoreName
  * @property {number | [number, number]} amount
@@ -68,6 +71,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} CommandAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {'command'} type
  * @property {string} command
  */
@@ -75,24 +79,51 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  * @typedef {Object} DumpFileAwardConfig
  * @property {[number?, number?]} [levelRange]
  * @property {number[]} [levels]
+ * @property {string} [checkLvlFormula]
  * @property {'dumped'} type
  * @property {string} filename
+ */
+/**
+ * @typedef {Object} SoundConfig
+ * @property {string} name
+ * @property {number | [number, number]} [volume]
+ * @property {number | [number, number]} [pitch]
  */
 /** @typedef {ItemAwardConfig | SNbtAwardConfig | MoneyAwardConfig | ScoreAwardConfig | CommandAwardConfig | DumpFileAwardConfig} AwardConfig */
 /** @typedef {BlockSourceConfig | KillSourceConfig | LoginSourceConfig} SourceConfig */
 /**
  * @typedef {Object} PluginConfig
- * @property {string} calcLvlExpression
+ * @property {string} lvlExpFormula
+ * @property {SoundConfig} [getExpSound]
+ * @property {SoundConfig} [levelUpSound]
  * @property {SourceConfig[]} source
  * @property {AwardConfig[]} award
  */
 /** @type {PluginConfig} */
 const defaultConfig = {
-  calcLvlExpression: '({{lvl}}-1)*5000',
+  lvlExpFormula: '(lvl - 1) * 5000 + Math.ceil(lvl / 20) * 5000',
+  getExpSound: {
+    name: 'random.orb',
+    volume: 0.3,
+    pitch: [0.8, 1.2],
+  },
+  levelUpSound: {
+    name: 'random.levelup',
+  },
   source: [
     {
       type: 'login',
       exp: [1000, 5000],
+    },
+    {
+      type: 'kill',
+      exp: 5,
+      value: [
+        'minecraft:zombie',
+        'minecraft:skeleton',
+        'minecraft:creeper',
+        'minecraft:spider',
+      ],
     },
     {
       type: 'mine',
@@ -101,35 +132,65 @@ const defaultConfig = {
     },
     {
       type: 'mine',
-      exp: 8,
+      exp: 6,
       value: [['minecraft:potatoes', 3]],
     },
     {
       type: 'mine',
-      exp: 50,
-      value: ['minecraft:diamond_ore'],
+      exp: 5,
+      value: [
+        'minecraft:coal_ore',
+        'minecraft:deepslate_coal_ore',
+        'minecraft:copper_ore',
+        'minecraft:deepslate_copper_ore',
+      ],
       ignoreSilkTouch: true,
     },
     {
-      type: 'place',
-      exp: 5,
-      value: ['minecraft:wheat'],
+      type: 'mine',
+      exp: 20,
+      value: ['minecraft:iron_ore', 'minecraft:deepslate_iron_ore'],
+      ignoreSilkTouch: true,
     },
     {
-      type: 'place',
-      exp: 8,
-      value: ['minecraft:potatoes'],
+      type: 'mine',
+      exp: 10,
+      value: [
+        'minecraft:redstone_ore',
+        'minecraft:deepslate_redstone_ore',
+        'minecraft:lapis_ore',
+        'minecraft:deepslate_lapis_ore',
+      ],
+      ignoreSilkTouch: true,
     },
     {
-      type: 'kill',
-      exp: 100,
-      value: ['minecraft:player'],
+      type: 'mine',
+      exp: 250,
+      value: ['minecraft:diamond_ore', 'minecraft:deepslate_diamond_ore'],
+      ignoreSilkTouch: true,
+    },
+    {
+      type: 'mine',
+      exp: 500,
+      value: ['minecraft:emerald_ore', 'minecraft:deepslate_emerald_ore'],
+      ignoreSilkTouch: true,
+    },
+    {
+      type: 'mine',
+      exp: 1000,
+      value: ['minecraft:ancient_debris'],
+      ignoreSilkTouch: true,
     },
   ],
   award: [
     {
       type: 'minecraft:diamond',
       amount: [1, 5],
+    },
+    {
+      checkLvlFormula: 'lvl % 2 === 0',
+      type: 'minecraft:emerald',
+      amount: 16,
     },
   ],
 };
@@ -183,12 +244,36 @@ function writeExpData() {
 // #region util functions
 
 /**
+ * @param {string} exp
+ * @param {Record<string, any>} vars
+ * @returns {any}
+ */
+function funcEval(exp, vars = {}) {
+  const varsText = Object.entries(vars)
+    .map(([n, v]) => `const ${n} = ${v}`)
+    .join('; ');
+  const code = `${varsText}; return (${exp});`;
+
+  // eslint-disable-next-line no-new-func
+  return new Function(code)();
+}
+
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+/**
  * @param {number} min
  * @param {number} max
  * @returns {number}
  */
 function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.floor(getRandomNumber(min, max + 1));
 }
 
 /**
@@ -196,6 +281,15 @@ function getRandomInt(min, max) {
  * @returns number
  */
 function processRandomNumber(range) {
+  if (range instanceof Array) range = getRandomNumber(...range);
+  return range;
+}
+
+/**
+ * @param {number | [number, number]} range
+ * @returns number
+ */
+function processRandomInt(range) {
   if (range instanceof Array) range = getRandomInt(...range);
   return range;
 }
@@ -214,6 +308,23 @@ function modifyItemCount(item, count) {
 
 /**
  * @param {Player} player
+ * @param {SoundConfig} sound
+ */
+function playSound(player, sound) {
+  const { realName } = player;
+  const { name, volume, pitch } = sound;
+
+  const volNum = volume ? processRandomNumber(volume) : 1.0;
+  const pitchNum = pitch ? processRandomNumber(pitch) : 1.0;
+
+  mc.runcmdEx(
+    `execute as "${realName}" at "${realName}" run ` +
+      `playsound "${name}" @s ~ ~ ~ ${volNum} ${pitchNum}`
+  );
+}
+
+/**
+ * @param {Player} player
  * @param {number} lvl
  */
 function getAward(player, lvl) {
@@ -221,12 +332,22 @@ function getAward(player, lvl) {
    * @param {AwardConfig} award
    * @returns {boolean}
    */
-  const awardFilter = ({ levelRange, levels }) => {
+  const awardFilter = (award) => {
+    const { checkLvlFormula, levelRange, levels } = award;
+
+    if (checkLvlFormula) {
+      return Boolean(funcEval(checkLvlFormula, { lvl }));
+    }
+
     if (levelRange && levelRange.length) {
       const [min, max] = levelRange;
       return (min ? min <= lvl : true) && (max ? lvl <= max : true);
     }
-    if (levels && levels.length) return levels.includes(lvl);
+
+    if (levels && levels.length) {
+      return levels.includes(lvl);
+    }
+
     return true;
   };
 
@@ -250,7 +371,7 @@ function getAward(player, lvl) {
 
       if (type === 'money') {
         const { amount } = award;
-        player.addMoney(processRandomNumber(amount));
+        player.addMoney(processRandomInt(amount));
         return null;
       }
 
@@ -262,7 +383,7 @@ function getAward(player, lvl) {
 
         mc.runcmdEx(
           `scoreboard players add ` +
-            `"${player.realName}" "${scoreName}" ${processRandomNumber(amount)}`
+            `"${player.realName}" "${scoreName}" ${processRandomInt(amount)}`
         );
         return null;
       }
@@ -283,13 +404,13 @@ function getAward(player, lvl) {
       let item = mc.newItem(nbt);
       if (!item) throw TypeError('创建物品对象失败');
 
-      if (amount) item = modifyItemCount(item, processRandomNumber(amount));
+      if (amount) item = modifyItemCount(item, processRandomInt(amount));
       return item;
     }
 
     const { type, amount, aux } = award;
 
-    const item = mc.newItem(type, processRandomNumber(amount));
+    const item = mc.newItem(type, processRandomInt(amount));
     if (!item) throw TypeError('创建物品对象失败');
 
     if (typeof aux === 'number') item.setAux(aux);
@@ -321,9 +442,7 @@ function levelUp(player, { lvl }) {
     `title "${player.realName}" subtitle §6Lv.${lvl - 1} §f--> §eLv.${lvl}`
   );
   mc.runcmdEx(`title "${player.realName}" title §aLevel UP!`);
-  mc.runcmdEx(
-    `execute as "${player.realName}" at "${player.realName}" run playsound random.levelup @s`
-  );
+  if (config.levelUpSound) playSound(player, config.levelUpSound);
   getAward(player, lvl);
 }
 
@@ -343,9 +462,7 @@ function formatTodayDate() {
  * @returns {number}
  */
 function getLevelExp(lvl) {
-  const exp = config.calcLvlExpression.replace(/\{\{lvl\}\}/g, lvl.toString());
-  // eslint-disable-next-line no-eval
-  return eval(exp);
+  return Number(funcEval(config.lvlExpFormula, { lvl }));
 }
 
 /**
@@ -404,7 +521,7 @@ function getPlayerExpData(player) {
  * @returns {number}
  */
 function addPlayerExp(player, exp) {
-  exp = processRandomNumber(exp);
+  exp = processRandomInt(exp);
   setPlayerExp(player, getPlayerExpData(player).exp + exp);
   return exp;
 }
@@ -419,7 +536,7 @@ function checkHasSilkTouch(item) {
   /** @type { { tag: { ench: ({ id: number, lvl: number })[] } } } */
   const nbt = item.getNbt().toObject();
 
-  for (const ench of nbt.tag.ench) if (ench.id === 16) return true;
+  for (const ench of nbt.tag.ench) if (ench && ench.id === 16) return true;
 
   return false;
 }
@@ -436,7 +553,7 @@ function sendAddXpTip(player, total) {
   const progress = (exp - thisLevelExp) / (nextLevelExp - thisLevelExp);
 
   const barMax = 25;
-  const barProgress = Math.ceil(barMax * progress);
+  const barProgress = Math.round(barMax * progress);
   const bar = ['§a'];
   for (let i = 0; i < barMax; i += 1) {
     if (i === barProgress) bar.push('§7');
@@ -449,9 +566,7 @@ function sendAddXpTip(player, total) {
       `§bLv.${lvl} §r| ${barTxt} §a(+${total} XP) §r| §e${exp} §7/ §g${nextLevelExp}`,
       5
     );
-    mc.runcmdEx(
-      `execute as "${player.realName}" at "${player.realName}" run playsound random.orb @s ~ ~ ~ 0.3`
-    );
+    if (config.getExpSound) playSound(player, config.getExpSound);
   }
 }
 
@@ -554,5 +669,45 @@ mc.listen('onJoin', (player) => {
 });
 
 // #endregion listeners
+
+// #region papi
+
+function regPapiVar() {
+  // eslint-disable-next-line global-require
+  const { PAPI } = require('./lib/BEPlaceholderAPI-JS');
+
+  /** @type { { [name: string]: (xuid: string) => string } } */
+  const papiPlayerVars = {
+    lvl: (xuid) => getPlayerExpData(xuid).lvl.toString(),
+    exp: (xuid) => getPlayerExpData(xuid).exp.toString(),
+    next_lvl_exp: (xuid) => getPlayerExpData(xuid).nextLevelExp.toString(),
+    next_lvl_need_exp: (xuid) => {
+      const { lvl, nextLevelExp } = getPlayerExpData(xuid);
+      return (nextLevelExp - getLevelExp(lvl)).toString();
+    },
+    lvl_up_need_exp: (xuid) => {
+      const { exp, nextLevelExp } = getPlayerExpData(xuid);
+      return (nextLevelExp - exp).toString();
+    },
+  };
+
+  for (const [name, func] of Object.entries(papiPlayerVars)) {
+    PAPI.registerPlayerPlaceholder(func, PLUGIN_NAME, `pexp_${name}`);
+  }
+  logger.info('注册PAPI变量完毕');
+}
+
+mc.listen('onServerStarted', () => {
+  try {
+    regPapiVar();
+  } catch (e) {
+    logger.warn(
+      `注册PAPI变量失败，可能是没有安装PAPI，跳过\n` +
+        `${e}\n${e instanceof Error ? e.stack : ''}`
+    );
+  }
+});
+
+// #endregion
 
 ll.registerPlugin(PLUGIN_NAME, PLUGIN_DESC, PLUGIN_VERSION, PLUGIN_EXTRA);
