@@ -101,7 +101,7 @@ const DUMPED_ITEMS_FOLDER = `${PLUGIN_DATA_PATH}/dumped`;
  */
 /** @type {PluginConfig} */
 const defaultConfig = {
-  lvlExpFormula: '(lvl - 1) * 5000 + Math.ceil(lvl / 20) * 5000',
+  lvlExpFormula: '(lvl - 1) * 5000 + Math.floor(lvl / 20) * 5000',
   getExpSound: {
     name: 'random.orb',
     volume: 0.3,

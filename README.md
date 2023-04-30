@@ -20,6 +20,11 @@ PlayerExp 是一个玩家经验与等级系统的插件，它可以让玩家通�
 - 支持 PAPI (BEPlaceHolderAPI) 变量，可以在其他插件中使用玩家的经验和等级信息。
 - 支持声音效果，可以在玩家获得经验或者升级时播放不同的声音。
 
+## 图片展示
+
+![Alt text](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010710.png)
+![Alt text](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010733.png)
+
 ## 安装方法
 
 请按照下面的方法来安装插件
@@ -42,7 +47,7 @@ lip i github.com/lgc-LLSEDev/PlayerExp
 
 Tip：实际的配置文件不能包含注释！
 
-```json
+```jsonc
 {
   // js 表达式，用于计算每个等级所需的经验值，可以用 lvl 代表玩家当前等级
   // 可以使用 js 内置函数、类等
@@ -50,7 +55,7 @@ Tip：实际的配置文件不能包含注释！
   // 注：玩家的经验值是累积计算的，升级时不会清零
   // 所以这个示例代表需要 500 经验才能升一级，且每升 20 级，每级需要的经验会多 500
   // (1~20 级：500 经验/级 | 20~40 级：1000 经验/级 | 以此类推...)
-  "lvlExpFormula": "(lvl - 1) * 500 + Math.ceil(lvl / 20) * 500",
+  "lvlExpFormula": "(lvl - 1) * 500 + Math.floor(lvl / 20) * 500",
 
   // 获取经验时播放的声音，可以整个删掉，代表不播放声音
   "getExpSound": {
