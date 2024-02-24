@@ -22,8 +22,8 @@ PlayerExp 是一个玩家经验与等级系统的插件，它可以让玩家通�
 
 ## 图片展示
 
-![Alt text](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010710.png)
-![Alt text](https://raw.githubusercontent.com/lgc-LLSEDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010733.png)
+![Alt text](https://raw.githubusercontent.com/lgc-LLDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010710.png)
+![Alt text](https://raw.githubusercontent.com/lgc-LLDev/readme/main/PlayerExp/QQ%E6%88%AA%E5%9B%BE20230501010733.png)
 
 ## 安装方法
 
@@ -34,7 +34,7 @@ PlayerExp 是一个玩家经验与等级系统的插件，它可以让玩家通�
 ### 使用 Lip
 
 ```shell
-lip i github.com/lgc-LLSEDev/PlayerExp
+lip i github.com/lgc-LLDev/PlayerExp
 ```
 
 ### 手动安装
@@ -207,7 +207,7 @@ Tip：实际的配置文件不能包含注释！
       "amount": [1, 3]
     }
 
-    // 奖励类型请看 https://github.com/lgc-LLSEDev/DailyFortune#pluginsdailyfortunefortunejson
+    // 奖励类型请看 https://github.com/lgc-LLDev/DailyFortune#pluginsdailyfortunefortunejson
     // 奖励发放代码我是从这个插件里薅过来的（ 懒得再写一遍文档
     // 注：本插件不能 dump 物品信息，请使用上面链接中的插件来 dump，或者使用其他方法
   ]
