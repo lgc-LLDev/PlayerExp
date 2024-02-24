@@ -1,5 +1,6 @@
 {
   "extends": "../tsconfig.template.json",
+  "include": ["*.js"],
   "compilerOptions": {
     "outDir": "./dist"
   }

@@ -1,20 +1,24 @@
 {
-  "format_version": 1,
-  "tooth": "github.com/lgc-LLSEDev/PlayerExp",
-  "version": "0.1.0",
-  "dependencies": {},
-  "information": {
-    "name": "PlayerExp",
-    "description": "另一套独立的玩家经验与等级系统",
-    "author": "lgc2333",
-    "license": "Apache-2.0",
-    "homepage": "https://github.com/lgc-LLSEDev/PlayerExp"
+  "$schema": "https://raw.githubusercontent.com/lippkg/lip/main/schemas/tooth.v2.schema.json",
+  "format_version": 2,
+  "tooth": "github.com/lgc-LLDev/PlayerExp",
+  "version": "0.1.1",
+  "info": {
+    "name": "Repeat",
+    "description": "Another separated player experience and level system",
+    "author": "student_2333",
+    "tags": ["plugin", "lse", "quickjs", "level", "experience", "award"]
   },
-  "placement": [
-    {
-      "source": "PlayerExp.js",
-      "destination": "plugins/PlayerExp.js"
-    }
-  ],
-  "possession": ["plugins/PlayerExp/"]
+  "files": {
+    "place": [
+      {
+        "src": "PlayerExp.js",
+        "dest": "plugins/PlayerExp/PlayerExp.js"
+      },
+      {
+        "src": "manifest.json",
+        "dest": "plugins/PlayerExp/manifest.json"
+      }
+    ]
+  }
 }

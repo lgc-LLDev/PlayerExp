@@ -5,7 +5,7 @@
 const PLUGIN_NAME = 'PlayerExp';
 const PLUGIN_DESC = '另一套独立的玩家经验与等级系统';
 /** @type {[number, number, number, Version]} */
-const PLUGIN_VERSION = [0, 1, 0, Version.Release];
+const PLUGIN_VERSION = [0, 1, 1, Version.Release];
 const PLUGIN_EXTRA = { Author: 'student_2333', License: 'Apache-2.0' };
 
 const PLUGIN_DATA_PATH = `plugins/${PLUGIN_NAME}`;
@@ -254,7 +254,7 @@ function funcEval(exp, vars = {}) {
     .join('; ');
   const code = `${varsText}; return (${exp});`;
 
-  // eslint-disable-next-line no-new-func
+  // eslint-disable-next-line no-new-func, @typescript-eslint/no-implied-eval
   return new Function(code)();
 }
 
@@ -673,7 +673,7 @@ mc.listen('onJoin', (player) => {
 // #region papi
 
 function regPapiVar() {
-  // eslint-disable-next-line global-require
+  // eslint-disable-next-line import/no-unresolved
   const { PAPI } = require('./lib/BEPlaceholderAPI-JS');
 
   /** @type { { [name: string]: (xuid: string) => string } } */
