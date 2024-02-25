@@ -4,7 +4,7 @@
   "tooth": "github.com/lgc-LLDev/PlayerExp",
   "version": "0.1.1",
   "info": {
-    "name": "Repeat",
+    "name": "PlayerExp",
     "description": "Another separated player experience and level system",
     "author": "student_2333",
     "tags": ["plugin", "lse", "quickjs", "level", "experience", "award"]
