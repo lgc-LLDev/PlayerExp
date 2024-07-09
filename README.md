@@ -68,12 +68,12 @@ Tip：实际的配置文件不能包含注释！
 
     // 声音的音调，可以是一个固定值或一个区间（[最小值, 最大值]），取值为 0 ~ 2
     // 可以不写，默认为 1
-    "pitch": [0.8, 1.2]
+    "pitch": [0.8, 1.2],
   },
 
   // 升级时播放的声音，可以整个删掉，参数同上
   "levelUpSound": {
-    "name": "random.levelup"
+    "name": "random.levelup",
   },
 
   // 经验来源的配置数组
@@ -84,7 +84,7 @@ Tip：实际的配置文件不能包含注释！
 
       // 获取的经验值
       // 可以指定随机获取的经验区间
-      "exp": [100, 500]
+      "exp": [100, 500],
     },
 
     // type=mine 破坏方块
@@ -101,8 +101,8 @@ Tip：实际的配置文件不能包含注释！
         "minecraft:wood",
         "minecraft:mangrove_wood",
         "minecraft:crimson_hyphae",
-        "minecraft:warped_hyphae"
-      ]
+        "minecraft:warped_hyphae",
+      ],
     },
     {
       // 同上
@@ -115,8 +115,8 @@ Tip：实际的配置文件不能包含注释！
         ["minecraft:wheat", 7],
 
         // 代表成熟的土豆
-        ["minecraft:potatoes", 3]
-      ]
+        ["minecraft:potatoes", 3],
+      ],
     },
     {
       // 同上
@@ -127,7 +127,7 @@ Tip：实际的配置文件不能包含注释！
       // 是否忽略精准采集附魔
       // 如果为 true，则只有没有精准采集附魔的工具才能获得经验
       // 可以不写，默认为 `false`
-      "ignoreSilkTouch": true
+      "ignoreSilkTouch": true,
     },
 
     // type=place 放置方块
@@ -140,8 +140,8 @@ Tip：实际的配置文件不能包含注释！
       // 放置这些方块可以获得经验
       "value": [
         // 种植土豆
-        "minecraft:potatoes"
-      ]
+        "minecraft:potatoes",
+      ],
     },
     {
       // 同上
@@ -151,8 +151,8 @@ Tip：实际的配置文件不能包含注释！
       // 这里也可以使用一个 [string, number] 的数组指定方块的数据值
       "value": [
         // 数据值为 2 的木头代表白桦木
-        ["minecraft:wood", 2]
-      ]
+        ["minecraft:wood", 2],
+      ],
     },
 
     // kill 杀死生物
@@ -166,9 +166,9 @@ Tip：实际的配置文件不能包含注释！
         "minecraft:zombie",
         "minecraft:skeleton",
         "minecraft:creeper",
-        "minecraft:spider"
-      ]
-    }
+        "minecraft:spider",
+      ],
+    },
   ],
 
   // 奖励配置数组
@@ -183,7 +183,7 @@ Tip：实际的配置文件不能包含注释！
       "type": "minecraft:iron_ingot",
 
       // 奖励的物品数量，可以是一个固定值或一个区间
-      "amount": 5
+      "amount": 5,
     },
     {
       // 指定等级，这里代表 5 级、10 级，和 15 级
@@ -191,7 +191,7 @@ Tip：实际的配置文件不能包含注释！
       "type": "minecraft:netherite_ingot",
 
       // 可以设定区间内随机奖励数量
-      "amount": [1, 2]
+      "amount": [1, 2],
     },
     {
       // 使用 js 表达式判断奖励条件
@@ -199,18 +199,18 @@ Tip：实际的配置文件不能包含注释！
       // 这里表示等级是偶数时才有奖励
       "checkLvlFormula": "lvl % 2 === 0",
       "type": "minecraft:emerald",
-      "amount": 16
+      "amount": 16,
     },
     {
       // 没有等级条件的奖励，每次升级都会给
       "type": "minecraft:diamond",
-      "amount": [1, 3]
-    }
+      "amount": [1, 3],
+    },
 
     // 奖励类型请看 https://github.com/lgc-LLDev/DailyFortune#pluginsdailyfortunefortunejson
     // 奖励发放代码我是从这个插件里薅过来的（ 懒得再写一遍文档
     // 注：本插件不能 dump 物品信息，请使用上面链接中的插件来 dump，或者使用其他方法
-  ]
+  ],
 }
 ```
 
